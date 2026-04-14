@@ -1,0 +1,373 @@
+        -:    0:Source:auth.c
+        -:    0:Graph:app-auth.gcno
+        -:    0:Data:app-auth.gcda
+        -:    0:Runs:1
+        -:    1:#include "auth.h"
+        -:    2:#include <stdio.h>
+        -:    3:#include <string.h>
+        -:    4:#include <errno.h>
+        -:    5:#include <stdlib.h>
+        -:    6:
+        -:    7:static char g_db_path[260] = "users.db";
+        -:    8:
+function trim_nl called 1 returned 100% blocks executed 83%
+        1:    9:static void trim_nl(char *s){
+        1:   10:    size_t n = strlen(s);
+       2*:   11:    while(n && (s[n-1]=='\n' || s[n-1]=='\r')) s[--n] = '\0';
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+branch  2 taken 100%
+branch  3 taken 0% (fallthrough)
+branch  4 never executed
+branch  5 never executed (fallthrough)
+        1:   12:}
+        -:   13:
+function ct_str_eq called 0 returned 0% blocks executed 0%
+    #####:   14:static int ct_str_eq(const char *a, const char *b){
+    #####:   15:    size_t la = strlen(a), lb = strlen(b), n = (la>lb? la:lb);
+    #####:   16:    unsigned char diff = 0;
+    #####:   17:    for(size_t i=0;i<n;i++){
+branch  0 never executed
+branch  1 never executed (fallthrough)
+    #####:   18:        unsigned char ca = (i<la)? (unsigned char)a[i] : 0;
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:   19:        unsigned char cb = (i<lb)? (unsigned char)b[i] : 0;
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:   20:        diff |= (unsigned char)(ca ^ cb);
+        -:   21:    }
+    #####:   22:    return (diff == 0) && (la == lb);
+branch  0 never executed (fallthrough)
+branch  1 never executed
+branch  2 never executed (fallthrough)
+branch  3 never executed
+        -:   23:}
+        -:   24:
+function find_user called 1 returned 100% blocks executed 69%
+        1:   25:static int find_user(FILE *f, const char *username, char *out_pass, size_t out_sz){
+        -:   26:    char line[AUTH_MAX_USER + AUTH_MAX_PASS + 8];
+        1:   27:    rewind(f);
+call    0 returned 100%
+        2:   28:    while(fgets(line, sizeof line, f)){
+call    0 returned 100%
+branch  1 taken 50%
+branch  2 taken 50% (fallthrough)
+        1:   29:        trim_nl(line);
+call    0 returned 100%
+        1:   30:        char *colon = strchr(line, ':');
+        1:   31:        if(!colon) continue;
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+    #####:   32:        *colon = '\0';
+    #####:   33:        const char *u = line;
+    #####:   34:        const char *p = colon + 1;
+    #####:   35:        if(ct_str_eq(u, username)){
+call    0 never executed
+branch  1 never executed (fallthrough)
+branch  2 never executed
+    #####:   36:            if(out_pass){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:   37:                strncpy(out_pass, p, out_sz-1);
+    #####:   38:                out_pass[out_sz-1] = '\0';
+        -:   39:            }
+    #####:   40:            return 1;
+        -:   41:        }
+        -:   42:    }
+        1:   43:    return 0;
+        -:   44:}
+        -:   45:
+function auth_init called 1 returned 100% blocks executed 89%
+        1:   46:int auth_init(const char *db_path){
+        1:   47:    if(db_path && *db_path){
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+        1:   48:        strncpy(g_db_path, db_path, sizeof g_db_path - 1);
+        1:   49:        g_db_path[sizeof g_db_path - 1] = '\0';
+        -:   50:    }
+        1:   51:    FILE *f = fopen(g_db_path, "a+");
+call    0 returned 100%
+       1*:   52:    if(!f) return -1;
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+        1:   53:    fclose(f);
+call    0 returned 100%
+        1:   54:    return 0;
+        -:   55:}
+        -:   56:
+function auth_add called 0 returned 0% blocks executed 0%
+    #####:   57:int auth_add(const char *username, const char *password){
+    #####:   58:    if(!username || !password) return -1;
+branch  0 never executed (fallthrough)
+branch  1 never executed
+branch  2 never executed (fallthrough)
+branch  3 never executed
+    #####:   59:    if(*username=='\0' || *password=='\0') return -1;
+branch  0 never executed (fallthrough)
+branch  1 never executed
+branch  2 never executed (fallthrough)
+branch  3 never executed
+    #####:   60:    if(strchr(username, ':') || strchr(username, '\n') || strchr(password, '\n') || strchr(password, '\r'))
+branch  0 never executed (fallthrough)
+branch  1 never executed
+branch  2 never executed (fallthrough)
+branch  3 never executed
+branch  4 never executed (fallthrough)
+branch  5 never executed
+branch  6 never executed (fallthrough)
+branch  7 never executed
+    #####:   61:        return -1;
+        -:   62:
+    #####:   63:    FILE *f = fopen(g_db_path, "r+");
+call    0 never executed
+    #####:   64:    if(!f){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:   65:        f = fopen(g_db_path, "a+");
+call    0 never executed
+    #####:   66:        if(!f) return -1;
+branch  0 never executed (fallthrough)
+branch  1 never executed
+        -:   67:    }
+    #####:   68:    if(find_user(f, username, NULL, 0)){
+call    0 never executed
+branch  1 never executed (fallthrough)
+branch  2 never executed
+    #####:   69:        fclose(f);
+call    0 never executed
+    #####:   70:        errno = EEXIST;
+call    0 never executed
+    #####:   71:        return -1;
+        -:   72:    }
+    #####:   73:    fseek(f, 0, SEEK_END);
+call    0 never executed
+    #####:   74:    fprintf(f, "%s:%s\n", username, password);
+call    0 never executed
+    #####:   75:    fclose(f);
+call    0 never executed
+    #####:   76:    return 0;
+        -:   77:}
+        -:   78:
+function auth_check called 1 returned 100% blocks executed 41%
+        1:   79:int auth_check(const char *username, const char *password){
+       1*:   80:    if(!username || !password) return -1;
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+        1:   81:    FILE *f = fopen(g_db_path, "r");
+call    0 returned 100%
+       1*:   82:    if(!f) return -1;
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+        -:   83:    char stored[AUTH_MAX_PASS + 1];
+        1:   84:    int res = 0;
+        1:   85:    if(find_user(f, username, stored, sizeof stored)){
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:   86:        size_t la=strlen(stored), lb=strlen(password), n=(la>lb?la:lb); unsigned char diff=0;
+    #####:   87:        for(size_t i=0;i<n;i++){
+branch  0 never executed
+branch  1 never executed (fallthrough)
+    #####:   88:            unsigned char ca = (i<la)? (unsigned char)stored[i] : 0;
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:   89:            unsigned char cb = (i<lb)? (unsigned char)password[i] : 0;
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:   90:            diff |= (unsigned char)(ca ^ cb);
+        -:   91:        }
+    #####:   92:        res = (diff==0 && la==lb) ? 1 : 0;
+branch  0 never executed (fallthrough)
+branch  1 never executed
+branch  2 never executed (fallthrough)
+branch  3 never executed
+        -:   93:    }else{
+        1:   94:        res = 0;
+        -:   95:    }
+        1:   96:    fclose(f);
+call    0 returned 100%
+        1:   97:    return res;
+        -:   98:}
+        -:   99:
+function rewrite_db_skip_or_replace called 0 returned 0% blocks executed 0%
+    #####:  100:static int rewrite_db_skip_or_replace(const char *target_user,
+        -:  101:                                      const char *new_user, const char *new_pass,
+        -:  102:                                      int *did_change){
+    #####:  103:    FILE *fin = fopen(g_db_path, "r");
+call    0 never executed
+    #####:  104:    if(!fin) return -1;
+branch  0 never executed (fallthrough)
+branch  1 never executed
+        -:  105:
+        -:  106:    char tmp_path[300];
+    #####:  107:    snprintf(tmp_path, sizeof tmp_path, "%s.tmp", g_db_path);
+        -:  108:
+    #####:  109:    FILE *fout = fopen(tmp_path, "w");
+call    0 never executed
+    #####:  110:    if(!fout){ fclose(fin); return -1; }
+branch  0 never executed (fallthrough)
+branch  1 never executed
+call    2 never executed
+        -:  111:
+        -:  112:    char line[AUTH_MAX_USER + AUTH_MAX_PASS + 8];
+    #####:  113:    int found = 0;
+        -:  114:
+    #####:  115:    while(fgets(line, sizeof line, fin)){
+call    0 never executed
+branch  1 never executed
+branch  2 never executed (fallthrough)
+        -:  116:        char raw[sizeof line];
+    #####:  117:        strncpy(raw, line, sizeof raw-1); raw[sizeof raw-1]='\0';
+    #####:  118:        trim_nl(raw);
+call    0 never executed
+    #####:  119:        char *colon = strchr(raw, ':');
+    #####:  120:        if(!colon){ continue; }
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  121:        *colon = '\0';
+    #####:  122:        const char *u = raw;
+    #####:  123:        const char *p = colon + 1;
+        -:  124:
+    #####:  125:        if(strcmp(u, target_user)==0){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  126:            found = 1;
+    #####:  127:            if(new_user == NULL && new_pass == NULL){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+branch  2 never executed (fallthrough)
+branch  3 never executed
+        -:  128:                /* delete */
+        -:  129:            }else{
+    #####:  130:                const char *write_user = new_user ? new_user : u;
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  131:                const char *write_pass = new_pass ? new_pass : p;
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  132:                fprintf(fout, "%s:%s\n", write_user, write_pass);
+call    0 never executed
+        -:  133:            }
+    #####:  134:            if(did_change) *did_change = 1;
+branch  0 never executed (fallthrough)
+branch  1 never executed
+        -:  135:        }else{
+    #####:  136:            fprintf(fout, "%s:%s\n", u, p);
+call    0 never executed
+        -:  137:        }
+        -:  138:    }
+        -:  139:
+    #####:  140:    fclose(fin);
+call    0 never executed
+    #####:  141:    fclose(fout);
+call    0 never executed
+        -:  142:
+    #####:  143:    if(!found){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  144:        remove(tmp_path);
+call    0 never executed
+    #####:  145:        errno = ENOENT;
+call    0 never executed
+    #####:  146:        return -1;
+        -:  147:    }
+        -:  148:
+    #####:  149:    remove(g_db_path);
+call    0 never executed
+    #####:  150:    if(rename(tmp_path, g_db_path) != 0){
+call    0 never executed
+branch  1 never executed (fallthrough)
+branch  2 never executed
+    #####:  151:        FILE *src = fopen(tmp_path, "r");
+call    0 never executed
+    #####:  152:        FILE *dst = fopen(g_db_path, "w");
+call    0 never executed
+    #####:  153:        if(!src || !dst){ if(src) fclose(src); if(dst) fclose(dst); remove(tmp_path); return -1; }
+branch  0 never executed (fallthrough)
+branch  1 never executed
+branch  2 never executed (fallthrough)
+branch  3 never executed
+branch  4 never executed (fallthrough)
+branch  5 never executed
+call    6 never executed
+branch  7 never executed (fallthrough)
+branch  8 never executed
+call    9 never executed
+call   10 never executed
+        -:  154:        char buf[4096]; size_t n;
+    #####:  155:        while((n=fread(buf,1,sizeof buf,src))>0) fwrite(buf,1,n,dst);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed (fallthrough)
+    #####:  156:        fclose(src); fclose(dst); remove(tmp_path);
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:  157:    }
+    #####:  158:    return 0;
+        -:  159:}
+        -:  160:
+function auth_delete called 0 returned 0% blocks executed 0%
+    #####:  161:int auth_delete(const char *username){
+    #####:  162:    if(!username || !*username) return -1;
+branch  0 never executed (fallthrough)
+branch  1 never executed
+branch  2 never executed (fallthrough)
+branch  3 never executed
+    #####:  163:    int changed = 0;
+    #####:  164:    return rewrite_db_skip_or_replace(username, NULL, NULL, &changed);
+call    0 never executed
+        -:  165:}
+        -:  166:
+function auth_change_password called 0 returned 0% blocks executed 0%
+    #####:  167:int auth_change_password(const char *username, const char *new_password){
+    #####:  168:    if(!username || !new_password || !*new_password) return -1;
+branch  0 never executed (fallthrough)
+branch  1 never executed
+branch  2 never executed (fallthrough)
+branch  3 never executed
+branch  4 never executed (fallthrough)
+branch  5 never executed
+    #####:  169:    int changed = 0;
+    #####:  170:    return rewrite_db_skip_or_replace(username, NULL, new_password, &changed);
+call    0 never executed
+        -:  171:}
+        -:  172:
+function auth_rename_user called 0 returned 0% blocks executed 0%
+    #####:  173:int auth_rename_user(const char *old_username, const char *new_username){
+    #####:  174:    if(!old_username || !new_username || !*new_username) return -1;
+branch  0 never executed (fallthrough)
+branch  1 never executed
+branch  2 never executed (fallthrough)
+branch  3 never executed
+branch  4 never executed (fallthrough)
+branch  5 never executed
+        -:  175:
+    #####:  176:    FILE *f = fopen(g_db_path, "r");
+call    0 never executed
+    #####:  177:    if(!f) return -1;
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  178:    if(find_user(f, new_username, NULL, 0)){
+call    0 never executed
+branch  1 never executed (fallthrough)
+branch  2 never executed
+    #####:  179:        fclose(f);
+call    0 never executed
+    #####:  180:        errno = EEXIST;
+call    0 never executed
+    #####:  181:        return -1;
+        -:  182:    }
+    #####:  183:    fclose(f);
+call    0 never executed
+        -:  184:
+    #####:  185:    int changed = 0;
+    #####:  186:    return rewrite_db_skip_or_replace(old_username, new_username, NULL, &changed);
+call    0 never executed
+        -:  187:}

@@ -1,0 +1,58 @@
+Kind;Name;MaxCyclomatic;Cyclomatic;RatioCommentToCode;AvgCyclomatic;AvgCountLine;CountLine
+Struct;__pthread_thunk;0;;0;0;0;1
+Static Function;__pthread_trampoline;;2;0;;;1
+File;app.h;0;;0,25;0;0;18
+File;auth.c;13;;0,01;5;17;187
+File;auth.c.func-sort-c.html;0;0;0;0;0;112
+File;auth.c.func.html;0;0;0;0;0;112
+File;auth.c.gcov.html;0;0;0;0;0;263
+File;auth.h;0;;0,33;0;0;17
+Function;auth_add;;7;0;;;21
+Function;auth_change_password;;2;0;;;5
+Function;auth_check;;9;0;;;20
+Function;auth_delete;;2;0;;;5
+Function;auth_init;;3;0;;;10
+Function;auth_rename_user;;4;0;;;15
+Function;cambio_pwd;;12;0;;;32
+Function;cancella_utente;;3;0,14;;;15
+Function;check_pwd;;7;0;;;9
+File;config.h;0;;0;0;0;4
+Function;crea_utente;;3;0,1;;;24
+Static Function;ct_str_eq;;5;0;;;10
+Function;demo_comment_mix;;1;0,86;;;27
+Function;demo_ub;;2;0;;;12
+Function;demo_unspecified;;1;0;;;6
+Function;effettua_login;;4;0;;;20
+Static Function;f_side;;1;0;;;1
+Static Function;find_user;;5;0;;;20
+Static Function;g_side;;1;0;;;1
+File;gcov.css;0;0;0;0;0;519
+File;index-sort-f.html;0;0;0;0;0;93
+File;index-sort-f.html;0;0;0;0;0;103
+File;index-sort-l.html;0;0;0;0;0;93
+File;index-sort-l.html;0;0;0;0;0;103
+File;index.html;0;0;0;0;0;93
+File;index.html;0;0;0;0;0;103
+Function;main;;7;0,04;;;29
+File;main.c;19;;0,08;6;18;325
+File;main.c.func-sort-c.html;0;0;0;0;0;116
+File;main.c.func.html;0;0;0;0;0;116
+File;main.c.gcov.html;0;0;0;0;0;430
+Function;manage_input;;6;0;;;10
+Function;modifica_utente;;19;0;;;50
+Static Function;pthread_attr_destroy;;1;0;;;1
+Static Function;pthread_attr_init;;1;0;;;1
+File;pthread_compat.h;4;;0,04;1;1;48
+Static Function;pthread_create;;4;0;;;5
+Static Function;pthread_join;;2;0;;;1
+Static Function;pthread_mutex_destroy;;1;0;;;1
+Static Function;pthread_mutex_init;;1;0;;;1
+Static Function;pthread_mutex_lock;;1;0;;;1
+Static Function;pthread_mutex_unlock;;1;0;;;1
+Static Function;pthread_mutexattr_destroy;;1;0;;;1
+Static Function;pthread_mutexattr_init;;1;0;;;1
+Function;read_line;;3;0;;;10
+Static Function;rewrite_db_skip_or_replace;;13;0,02;;;60
+Function;rinomina_user;;16;0;;;32
+Static Function;trim_nl;;2;0;;;4
+Function;validate_edit_pwd;;2;0;;;8
